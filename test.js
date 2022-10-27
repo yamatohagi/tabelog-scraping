@@ -17,7 +17,7 @@ describe("selenium test section 1", () => {
     driver.manage().window().maximize();
 
     // サイトへ遷移
-    await driver.get("https://tabelog.com/kanagawa/A1401/A140104/14003794/party/");
+    await driver.get("https://tabelog.com/kanagawa/A1404/A140404/14074828/");
 
     await getSeatAvailability();
 
@@ -31,16 +31,15 @@ const waitPeopleCountLoad = async (count) => await driver.wait(until.elementLoca
 const getReserveTimeOptions = () => driver.findElement(By.css(`.js-svt`));
 const getFirstCalendarElem = () => driver.findElement(By.css(`.js-week-wrap`));
 const isPossibleReserve = (classTest) => classTest.match(/js-calendar-day-target/) !== null;
+const getDay = async (p) =>
+  `${await p.getAttribute("data-year")}/${await p.getAttribute("data-month")}/${await p.getAttribute("data-day")}`;
 const clickPtags = async () => {
   const pTags = await getFirstCalendarElem().findElements(By.css("p"));
   for (let p of pTags) {
     if (isPossibleReserve(await p.getAttribute("class"))) {
-      console.log(await p.getText());
-
       driver.executeScript("arguments[0].click();", p);
       await driver.sleep(3000);
-
-      console.log({ 日: await p.getText(), 時間: await getReserveTimeOptions().getText() });
+      console.log({ 日: await getDay(p), 時間: await getReserveTimeOptions().getText() });
     }
   }
 };
